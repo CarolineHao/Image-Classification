@@ -5,6 +5,7 @@
 # 'df_cv' is the cross-validation data (16%)                                  #
 #-----------------------------------------------------------------------------#
 library(caret)
+set.seed(42)
 #Load the Data
 df = read.csv('/Users/gongfan/Desktop/training_set/sift_train.csv', header = T)
 label = read.csv('/Users/gongfan/Desktop/training_set/label_train.csv', header = T)
