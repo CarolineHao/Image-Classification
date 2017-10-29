@@ -67,7 +67,8 @@ test_lr_error = mean(predict(lr.fit, df_test) != df_test$Label)
   
 ### SVM
   
-svmGrid = expand.grid(sigma= 2^c(-25, -15, -5), C= 2^c(0:2))
+#svmGrid = expand.grid(sigma= 2^c(-25, -15, -5), C= 2^c(0:2))
+svmGrid = expand.grid(sigma= 10^(-4:-1), C= 10^(-3:1))
   
 start_time_svm = Sys.time() # Model Start Time
 svm.fit = train(Label~., 
@@ -115,10 +116,12 @@ test_gbm_error = mean(predict(gbm.fit, df_test) != df_test$Label)
 
 df_result = data.frame(Model = c('Random Forest', 'Logistic Regression', 
                                  'SVM', 'GBM', 'Neural Networks'), 
-                       Train_Error = c(1, 1, 1, 1, 1), 
-                       Test_Error = c(1, 1, 1, 1, 1), 
-                       Running_Time = c(1, 1, 1, 1, 1))
+                       Train_Error = c(train_rf_error, train_lr_error, train_svm_error, train_gbm_error, 1), 
+                       Test_Error = c(test_rf_error, train_lr_error, test_svm_error, test_gbm_error, 1), 
+                       Running_Time = c(rf_time, lr_time, svm_time, gbm_time, 1))
   
+  
+df_result
   
  
   
