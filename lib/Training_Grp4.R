@@ -17,8 +17,8 @@ library(nnet)
   
 ### Create a balanced df_train and test data
 
-df = read.csv('/Users/gongfan/Desktop/GR5243/training_set/sift_train.csv', header = T)
-label = read.csv('/Users/gongfan/Desktop/GR5243/training_set/label_train.csv', header = T)
+df = read.csv('../data/training_set/sift_train.csv', header = T)
+label = read.csv('../data/training_set/label_train.csv', header = T)
   
 set.seed(42)
 df_complete = cbind(label, df) # Combine the dataframe and label
