@@ -1,0 +1,129 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r packages}
+library(caTools)
+library(EBImage)
+library(mxnet)
+library(pbapply)
+```
+
+
+# Building the model
+
+
+```{r load data}
+extract_feature <- function(dir_path, width, height) {
+  img_size = width*height
+  images_names  = list.files(path=img_folder_dir, pattern = ".*.jpg")
+  
+  print(paste("Start processing", length(images_names), "images"))
+  feature_list <- pblapply(images_names, function(imgname) {
+  
+    img <- readImage(file.path(img_folder_dir, imgname))
+    img_resized <- resize(img, w = width, h = height)
+    grayimg <- channel(img_resized, "gray")
+  
+    img_matrix <- grayimg@.Data
+    img_vector <- as.vector(t(img_matrix))
+    return(img_vector)
+  })
+  feature_matrix <- do.call(rbind, feature_list)  ## bind the list of vector into matrix
+  feature_matrix <- as.data.frame(feature_matrix)
+  
+  names(feature_matrix) <- paste0("pixel", c(1:img_size))
+  
+  label = read.csv("/Users/bxin66/Dropbox/Columbia/Class3/5243/project3/train_set/label_train.csv", header = T)
+  feature_matrix = cbind(label[,2],feature_matrix)
+  
+  feature_matrix = cbind(sample.split(label[,2],SplitRatio=0.8),feature_matrix)
+  colnames(feature_matrix)[1:2] = c("is_train","label")
+  return(feature_matrix)
+}
+
+
+img_folder_dir = "/Users/bxin66/Dropbox/Columbia/Class3/5243/project3/train_set/images/"
+df = extract_feature(dir_path = img_folder_dir, width = 64, height = 64)
+```
+
+
+
+```{r}
+# Set up train and test datasets
+train_x = t(df[df$is_train==T,3:4098])
+train_y = df[df$is_train==T,2]
+
+train_array = train_x
+dim(train_array) = c(64, 64, 1, ncol(train_x))
+
+test_data = df[df$is_train==F,2:4098]
+test_x = t(df[df$is_train==F,3:4098])
+test_y = df[df$is_train==F,2]
+
+test_array = test_x
+dim(test_array) = c(64, 64, 1, ncol(test_x))
+```
+
+
+```{r symbolic model}
+# Set up the symbolic model
+data <- mx.symbol.Variable('data')
+# 1st convolutional layer
+conv_1 = mx.symbol.Convolution(data = data, kernel = c(5, 5), num_filter = 15)
+act_1 = mx.symbol.Activation(data = conv_1, act_type = "tanh")
+pool_1 = mx.symbol.Pooling(data = act_1, pool_type = "max", kernel = c(5, 5), stride = c(2, 2))
+# 2nd convolutional layer
+conv_2 = mx.symbol.Convolution(data = pool_1, kernel = c(5, 5), num_filter = 40)
+act_2 = mx.symbol.Activation(data = conv_2, act_type = "tanh")
+pool_2 = mx.symbol.Pooling(data=act_2, pool_type = "max", kernel = c(3, 3), stride = c(2, 2))
+
+
+# 1st fully connected layer
+flatten = mx.symbol.Flatten(data = pool_2)
+fc_1 = mx.symbol.FullyConnected(data = flatten, num_hidden = 400)
+act_3 = mx.symbol.Activation(data = fc_1, act_type = "tanh")
+dropout_3=mx.symbol.Dropout(data = act_3, p=0.2)
+
+# 2nd fully connected layer
+fc_2 = mx.symbol.FullyConnected(data = dropout_3, num_hidden = 3)
+dropout_4 = mx.symbol.Dropout(data = fc_2, p=0.2)
+# Output. Softmax output since we'd like to get some probabilities.
+NN_model <- mx.symbol.SoftmaxOutput(data = dropout_4)
+```
+
+
+
+
+
+# roll out the model
+```{r train and test model}
+mx.set.seed(100)
+devices <- mx.cpu()
+# Train the model
+model <- mx.model.FeedForward.create(NN_model,
+                                     X = train_array,
+                                     y = train_y,
+                                     ctx = devices,
+                                     num.round = 20,
+                                     array.batch.size = 32,
+                                     learning.rate = 0.001,
+                                     #momentum = 0.9,
+                                     eval.metric = mx.metric.accuracy,
+                                     initializer = mx.init.Xavier(factor_type = "in", magnitude = 2.34),
+                                     optimizer = "adam",
+                                     epoch.end.callback = mx.callback.log.train.metric(100))
+# Test the model 
+predicted <- predict(model,test_array)
+predicted_labels <- max.col(t(predicted)) - 1
+sum(diag(table(test_data[, 1], predicted_labels)))/dim(test_data)[1]
+```
+
+
+
+
+
+
+
