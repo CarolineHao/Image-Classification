@@ -17,7 +17,7 @@ library(nnet)
   
 ### Create a balanced df_train and test data
 
-df = read.csv('../data/training_set/sift_train.csv', header = T)
+df = read.csv('../data/training_set/lbp(555).csv', header = F)
 label = read.csv('../data/training_set/label_train.csv', header = T)
   
 set.seed(42)
@@ -39,19 +39,20 @@ fitControl = trainControl(method = 'cv', number = 2) # Use 2-fold Validation
 rfGrid = expand.grid(mtry = floor(sqrt(ncol(df_train)) * 0.97) : floor(sqrt(ncol(df_train) * 1.03)))
   
 start_time_rf = Sys.time() # Model Start Time 
-rf.fit = train(Label~., 
-                 data = df_train,
-                 method = "rf", 
-                 trControl = fitControl,
-                 ntree = 1000,
-                 tuneGrid = rfGrid) # Parameter Tuning
+#rf.fit = train(Label~., 
+#                 data = df_train,
+#                 method = "rf", 
+#                 trControl = fitControl,
+#                 ntree = 1000,
+#                 tuneGrid = rfGrid) # Parameter Tuning
+rf.fit=randomForest(Label~., data=df_train, ntree=1000)
 end_time_rf = Sys.time() # Model End time
 end_time_rf - start_time_rf
 
 rf_time = end_time_rf - start_time_rf #Total Running Time
   
-train_rf_error = mean(predict(rf.fit, df_train) != df_train$Label)
-test_rf_error = mean(predict(rf.fit, df_test) != df_test$Label)
+train_rf_accuracy = mean(predict(rf.fit, df_train) == df_train$Label)
+test_rf_accuracy = mean(predict(rf.fit, df_test) == df_test$Label)
   
 ### Logistic Regression Model
   
@@ -62,8 +63,8 @@ end_time_lr - start_time_lr
 
 lr_time = end_time_lr - start_time_lr #Total Running Time
   
-train_lr_error = mean(predict(lr.fit, df_train) != df_train$Label)
-test_lr_error = mean(predict(lr.fit, df_test) != df_test$Label)
+train_lr_accuracy = mean(predict(lr.fit, df_train) == df_train$Label)
+test_lr_accuracy = mean(predict(lr.fit, df_test) == df_test$Label)
   
 ### SVM
   
@@ -71,18 +72,19 @@ test_lr_error = mean(predict(lr.fit, df_test) != df_test$Label)
 svmGrid = expand.grid(sigma= 10^(-4:-1), C= 10^(-3:1))
   
 start_time_svm = Sys.time() # Model Start Time
-svm.fit = train(Label~., 
-                 data = df_train,
-                 method = "svmRadial", 
-                 trControl = fitControl, 
-                 tuneGrid = svmGrid)
+#svm.fit = train(Label~., 
+#                 data = df_train,
+#                 method = "svmRadial", 
+#                 trControl = fitControl, 
+#                 tuneGrid = svmGrid)
+svm.fit= svm(Label~., data= df_train, kernal="radial")
 end_time_svm = Sys.time() # Model End time
 end_time_svm - start_time_svm
 
 svm_time = end_time_svm - start_time_svm #Total Running Time
   
-train_svm_error = mean(predict(svm.fit, df_train) != df_train$Label)
-test_svm_error = mean(predict(svm.fit, df_test) != df_test$Label)
+train_svm_accuracy = mean(predict(svm.fit, df_train) == df_train$Label)
+test_svm_accuracy = mean(predict(svm.fit, df_test) == df_test$Label)
   
   
 ### GBM 
@@ -104,20 +106,20 @@ end_time_gbm = Sys.time() # Model End time
 
 gbm_time = end_time_gbm - start_time_gbm #Total Running Time
 
-train_gbm_error = mean(predict(gbm.fit, df_train) != df_train$Label)
-test_gbm_error = mean(predict(gbm.fit, df_test) != df_test$Label)
+train_gbm_accuracy = mean(predict(gbm.fit, df_train) == df_train$Label)
+test_gbm_accuracy = mean(predict(gbm.fit, df_test) == df_test$Label)
 
 ### Neural Networks
  
 
  
  
-### Result Table (Error and Running Time)
+### Result Table (accuracy and Running Time)
 
 df_result = data.frame(Model = c('Random Forest', 'Logistic Regression', 
                                  'SVM', 'GBM', 'Neural Networks'), 
-                       Train_Error = c(train_rf_error, train_lr_error, train_svm_error, train_gbm_error, 1), 
-                       Test_Error = c(test_rf_error, train_lr_error, test_svm_error, test_gbm_error, 1), 
+                       Train_accuracy = c(train_rf_accuracy, train_lr_accuracy, train_svm_accuracy, train_gbm_accuracy, 1), 
+                       Test_accuracy = c(test_rf_accuracy, train_lr_accuracy, test_svm_accuracy, test_gbm_accuracy, 1), 
                        Running_Time = c(rf_time, lr_time, svm_time, gbm_time, 1))
   
   
