@@ -4,7 +4,7 @@
 
 library(caret)
 
-label = read.csv('../data/label_train.csv', header = T)
+label = read.csv('../data/training_set/label_train.csv', header = T)
 
 or<- c(6,8,10)
 cell<-c(5,6,7,8)
@@ -12,7 +12,7 @@ cell<-c(5,6,7,8)
 library(OpenImageR)
 
  train_data<-list()
- img_dir<-"~/Desktop/proj3/data/training_set/images"
+ img_dir<-"../data/training_set/images"
  
  
  for (i in 1:3000){
