@@ -21,9 +21,9 @@ df_train = df_complete[-dpart, ] # training set
 
 
 ### lbp results
-train_lbp = list(lr, gbm, rf, svm, df_result)
-save(train_lbp, file="../output/train_lbp.RData")
-load("../output/train_lbp.RData")
+#train_lbp = list(lr, gbm, rf, svm, df_result)
+#save(train_lbp, file="../output/train_lbp.RData")
+#load("../output/train_lbp.RData")
 
 
 ### lr
