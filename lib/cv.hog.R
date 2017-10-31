@@ -32,7 +32,8 @@ rownames(accuracy) <- paste("cells", cell)
         hog <- rbind(hog,HOG(train_data[[i]],cells=cell[j],orientations = or[h]))
       }
       
-      write.csv(hog,file=paste0("hog",cell[j],or[h],".csv"))
+      #write.csv(hog,file=paste0("hog",cell[j],or[h],".csv"))
+      write.table(hog810,file=paste0("hog",cell[j],or[h],".csv"),row.names = F,col.names = F,sep=",")
       
       df=hog
       set.seed(42)
