@@ -4,21 +4,22 @@
 
 library(caret)
 
-label = read.csv('~/Desktop/proj3/data/training_set/label_train.csv', header = T)
-cell <- c(4,6,8,10)
-or<-c(6,8,10,12)
+label = read.csv('../data/label_train.csv', header = T)
+
+or<- c(6,8,10)
+cell<-c(5,6,7,8)
 
 library(OpenImageR)
 
-# train_data<-list()
-# img_dir<-"~/Desktop/proj3/data/training_set/images"
-# 
-# 
-# for (i in 1:3000){
-#   n<-nchar(as.character(i))
-#   path<-paste0(img_dir,"/img_",paste(rep(0,4-n),collapse=""),i,".jpg")
-#   train_data[[i]]<-readImage(path)
-# }
+ train_data<-list()
+ img_dir<-"~/Desktop/proj3/data/training_set/images"
+ 
+ 
+ for (i in 1:3000){
+   n<-nchar(as.character(i))
+   path<-paste0(img_dir,"/img_",paste(rep(0,4-n),collapse=""),i,".jpg")
+   train_data[[i]]<-readImage(path)
+ }
 
 accuracy<-matrix(NA, nrow = length(cell), ncol =length(or))
 colnames(accuracy) <- paste("orientation", or)
@@ -33,7 +34,7 @@ rownames(accuracy) <- paste("cells", cell)
       }
       
       #write.csv(hog,file=paste0("hog",cell[j],or[h],".csv"))
-      write.table(hog810,file=paste0("hog",cell[j],or[h],".csv"),row.names = F,col.names = F,sep=",")
+      #write.table(hog,file=paste0("hog",cell[j],or[h],".csv"),row.names = F,col.names = F,sep=",")
       
       df=hog
       set.seed(42)
