@@ -18,7 +18,7 @@ train_gbm = function(dat_train){
   start_time_gbm = Sys.time() # Model Start Time
   
   gbm.fit = gbm(Label~., 
-                data = df_train,
+                data = dat_train,
                 n.trees = 400,
                 distribution = "multinomial",
                 interaction.depth = 3, 
@@ -48,7 +48,7 @@ train_svm = function(dat_train){
   
   start_time_svm = Sys.time() # Model Start Time
   svm.fit = train(Label~., 
-                  data = df_train,
+                  data = dat_train,
                   method = "svmLinear",
                   preProc = c('center', 'scale'),
                   tuneGrid = svmGrid,
@@ -73,7 +73,7 @@ train_lr = function(dat_train){
   
   start_time_lr = Sys.time() # Model Start Time
   lr.fit = multinom(Label~., 
-                    data = df_train, 
+                    data = dat_train, 
                     MaxNWts=16000)
   end_time_lr = Sys.time() # Model End time
   end_time_lr - start_time_lr
@@ -93,14 +93,14 @@ train_rf = function(dat_train){
   
   fitControl = trainControl(method = 'cv', number = 2)
   
-  rfGrid = expand.grid(mtry = floor(sqrt(ncol(df_train)) * 0.95) : floor(sqrt(ncol(df_train) * 1.05)))
+  rfGrid = expand.grid(mtry = floor(sqrt(ncol(dat_train)) * 0.95) : floor(sqrt(ncol(dat_train) * 1.05)))
   
   start_time_rf = Sys.time() # Model Start Time 
   rf.fit = train(Label~., 
-                 data = df_train,
+                 data = dat_train,
                  method = "rf", 
                  trControl = fitControl,
-                 ntree = 1000, #number of trees to grow
+                 ntree = 500, #number of trees to grow
                  tuneGrid = rfGrid) # Parameter Tuning
   end_time_rf = Sys.time() # Model End time
   end_time_rf - start_time_rf

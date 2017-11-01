@@ -3,7 +3,7 @@
 #                                                                             #
 ###############################################################################
 
-train_test_accuracy = function (feature) {
+train_test_accuracy = function(feature) {
   
   ### feature: feature extraction method we use
   
@@ -16,7 +16,7 @@ train_test_accuracy = function (feature) {
   library(randomForest)
   library(nnet)
   
-  df = train_test_split(feature) 
+  df = train_test_split(feature_name = feature) 
   df_train = df$df_train
   df_test = df$df_test
   
@@ -66,3 +66,5 @@ train_test_accuracy = function (feature) {
   return(df_result)
   
 }
+
+
