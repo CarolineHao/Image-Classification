@@ -34,7 +34,6 @@ train_gbm = function(dat_train){
 
 
 
-
 ##### SVM #####
 
 train_svm = function(dat_train){
@@ -94,7 +93,7 @@ train_rf = function(dat_train){
   
   fitControl = trainControl(method = 'cv', number = 2)
   
-  rfGrid = expand.grid(mtry = floor(sqrt(ncol(df_train)) * 0.97) : floor(sqrt(ncol(df_train) * 1.03)))
+  rfGrid = expand.grid(mtry = floor(sqrt(ncol(df_train)) * 0.95) : floor(sqrt(ncol(df_train) * 1.05)))
   
   start_time_rf = Sys.time() # Model Start Time 
   rf.fit = train(Label~., 
@@ -112,7 +111,7 @@ train_rf = function(dat_train){
 }
 
 
-
+##### Neural Networks #####
 
 train_cnn = function (dat_train_cnn){
   
