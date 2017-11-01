@@ -22,7 +22,7 @@ After several attempts, We found that LBP+Logistic has the highest classificatio
 
 Here is the test accuracy of our models:
 
-![image](figs/Test_accuracy.png){align="left"}
+![image](figs/Test_accuracy.png)
 
 
 The comparison of running time:
