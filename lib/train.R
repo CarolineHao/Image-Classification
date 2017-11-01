@@ -114,16 +114,17 @@ train_rf = function(dat_train){
 ##### Neural Networks #####
 
 train_cnn = function (dat_train_cnn){
+  start_time_cnn = Sys.time()
   
-  train_x = t(dat_train_cnn[is_train==T,3:4098])
-  train_y = dat_train_cnn[is_train==T,2]
+  train_x = t(df_all[df_all$is_train==T,3:4098])
+  train_y = c(df_all[df_all$is_train==T,2])
   
   train_array = train_x
   dim(train_array) = c(64, 64, 1, ncol(train_x))
   
-  test_data = dat_train_cnn[dat_train_cnn$is_train==F,2:4098]
-  test_x = t(dat_train_cnn[dat_train_cnn$is_train==F,3:4098])
-  test_y = dat_train_cnn[dat_train_cnn$is_train==F,2]
+  test_data = df_all[df_all$is_train==F,2:4098]
+  test_x = t(df_all[df_all$is_train==F,3:4098])
+  test_y = df_all[df_all$is_train==F,2]
   
   test_array = test_x
   dim(test_array) = c(64, 64, 1, ncol(test_x))
@@ -174,9 +175,10 @@ train_cnn = function (dat_train_cnn){
                                        epoch.end.callback = mx.callback.save.checkpoint("train_cnn"))
   
   
-  
+  end_time_cnn = Sys.time() # Model End time
+  cnn_time = end_time_cnn - start_time_cnn #Total Running Time
+  return(cnn_time)
 }
-
 
 
 
