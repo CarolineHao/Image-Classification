@@ -13,8 +13,10 @@ In this project, we created a classification engine for images of dogs versus fr
 
 # Step 0. Install, Load packages 
 
-```{r}
-packages.used=c("caret","gbm", "e1071", "DMwR", "nnet", "randomForest","OpenImageR")
+Because of using the package caret, when we trained model we also perform cross validation by using the `tuneGrid` and `traincontrol` arguement, so we ignore creating cross validation R file.
+
+```{r, warning=F, message=FALSE}
+packages.used=c("caret","gbm", "e1071", "DMwR", "nnet", "randomForest","OpenImageR","DT")
 # check packages that need to be installed.
 packages.needed=setdiff(packages.used,
 intersect(installed.packages()[,1],
@@ -31,16 +33,16 @@ library(DMwR)
 library(randomForest)
 library(nnet)
 library(OpenImageR)
+library(DT)
 
-source("../lib/train_v2.R")
-source("../lib/test_v2.R")
-source("../lib/train_test_split.R")
+source("../lib/train.R")
+source("../lib/test.R")
 
 ```
 
 # Step 1. Construct Baseline Model
 
- Step 1.1. Load Feature
+# Step 1.1. Load Feature
  
  We devided the whole training set into 'df_train' & 'df_test'
  
@@ -49,21 +51,29 @@ source("../lib/train_test_split.R")
  'df_test' is the testing data (20%) 
  
 ```{r}
-
+source("../lib/train_test_split.R")
 df = train_test_split("sift") 
 Sift_train = df$df_train
 Sift_test = df$df_test
 ```
 
- Step 1.2. Training Process of Baseline model
+# Step 1.2. Training Process of Baseline model
+ 
+```{r, eval = FALSE}
+baseline.result = train_gbm(Sift_train)
+```
 
 ```{r}
 
 load("../output/baseline.result.Rdata")
+baseline.time = baseline.result[[4]]
+baseline.time
 
+baseline.accuracy = 1 - baseline.result[[3]]
+print(paste0("The accuracy rate of baseline model is ", baseline.accuracy))
 ```
 
- Step 1.3. Predict result
+# Step 1.3. Predict result
  
  We used GBM, Logistic Regression, SVM, Random Forest to construct the classification process
  separatly. However, the process really need a long time.
@@ -80,127 +90,202 @@ load("../output/baseline.result.Rdata")
 
 The feature Sift, which has 5000 diamensions, is extremely over-weighted, espacially using classifier SVM. Thus we need to explore some other features. In the following process, we extracted LBP features and HoG features.
 
- Step 2.1. Local Binary Patterns (LBP)
+# Step 2.1. Local Binary Patterns (LBP)
  
- ??? Divide the examined window into cells (e.g. 16x16 pixels for each cell).
+ • Divide the examined window into cells (e.g. 16x16 pixels for each cell).
  
- ??? For each pixel in a cell, compare the pixel to each of its 8 neighbors 2
+ • For each pixel in a cell, compare the pixel to each of its 8 neighbors 2
  
- ??? Where the center pixel???s value is greater than the neighbor???s value, write ???0???. Otherwise, write
- ???1???. This gives an 8-digit binary number.
+ • Where the center pixel’s value is greater than the neighbor’s value, write “0”. Otherwise, write
+ “1”. This gives an 8-digit binary number.
  
- ??? Compute the histogram over the cell. This histogram can be seen as a 256-dimensional feature
+ • Compute the histogram over the cell. This histogram can be seen as a 256-dimensional feature
  vector.
  
- ??? Optionally normalize the histogram to 59-dimensional feature vector.
+ • Optionally normalize the histogram to 59-dimensional feature vector.
  
- ??? Concatenate histograms of all cells. This gives a feature vector for the entire window.
+ • Concatenate histograms of all cells. This gives a feature vector for the entire window.
  
  We used matlab to extract LBP feature, and finally produce 555 diamensions.
  
- Step 2.1.1. Load Feature
+# Step 2.1.1. Creat and Load Feature
+ We used matlab to extract LBP feature, and finally produce 555 diamensions.
  
 ```{r}
 
 df = train_test_split("lbp") 
-LBP_train = df$df_train
-LBP_test = df$df_test
+LBP_train = df $ df_train
+LBP_test = df $ df_test
+
 ```
 
- Step 2.1.2. Training Process under LBP
+# Step 2.1.2. Training Process under LBP
  
-# LBP + Random Forest
+# LBP + Classifiers
 
-```{r}
+```{r, eval=FALSE}
+
+# LBP + Random Forest
 rf.fit.LBP = train_rf(LBP_train)
-rf.fit.LBP
-```
 
 # LBP + Logistic Regresstion
-
-```{r}
 lr.fit.LBP = train_lr(LBP_train)
-# lr.fit.LBP
-```
 
 # LBP + SVM
-
-```{r}
 svm.fit.LBP = train_svm(LBP_train)
-svm.fit.LBP
-```
 
 # LBP + GBM
-
-```{r}
 gbm.fit.LBP = train_gbm(LBP_train)
-gbm.fit.LBP
+
+```
+# Step 2.1.3. Result table of LBP extraction
+
+```{r, eval=FALSE}
+
+source("../lib/train_test_accuracy.R")
+lbp.result = train_test_accuracy("lbp")
+
 ```
 
- Step 2.1.3. Result table of LBP extraction
-
 ```{r}
+
 load("../output/lbp.result.Rdata")
 
+lbp.result
+
 ```
 
- Step 2.2. HoG
+# Step 2.2. HoG
  
- We used R to extract HoG feature, and finally produce 510 diamensions.
+ We used R to extract HoG feature, and finally produce 251 diamensions, and the parameter of HoG  should be 5 and 10.
  
- Step 2.2.1. Load Feature
+```{r }
+
+load("../output/hog.para.accuracy.Rdata")
+hog.para.accuracy
+
+```
+
+ 
+# Step 2.2.1. Load Feature
  
 ```{r}
 
-df = train_test_split("hog") 
-HoG_train = df$df_train
+df = train_test_split("hog510") 
+HoG_train = df $ df_train
 HoG_test = df$df_test
 
 ```
 
- Step 2.2.2. Training Process under HoG
+# Step 2.2.2. Training Process under HoG
 
+# HoG + Classifiers
+
+```{r, eval=FALSE}
 # HoG + Random Forest
-
-```{r}
 rf.fit.HoG = train_rf(HoG_train)
-rf.fit.HoG
-```
 
 # HoG + Logistic Regresstion
-
-```{r}
 lr.fit.HoG = train_lr(HoG_train)
-lr.fit.HoG
-```
 
 # HoG + SVM
-
-```{r}
-SVM.fit.HoG = train_rf(HoG_train)
-SVM.fit.HoG
-```
+SVM.fit.HoG = train_rf(SVM.fit.HoG)
 
 # HoG + GBM
-
-```{r}
 gbm.fit.HoG = train_gbm(HoG_train)
-gbm.fit.HoG
 ```
 
- Step 2.2.3. Result table of HoG extraction
+# Step 2.2.3. Result table of HoG extraction
+
+```{r, eval=FALSE}
+
+source("../lib/train_test_accuracy.R")
+hog.result = train_test_accuracy("hog510")
+
+```
 
 ```{r}
 
 load("../output/hog.result.Rdata")
 
+hog.result
 ```
 
- Step 2.3. Neural Network
+# Step 2.3. Neural Network
  
-# Step 3. Model Selection with Cross-validation
+# Step 3. Model Selection
 
-# Step 4. Final Train & Time
+```{r, echo=FALSE}
+
+lbp.result$Feature<- 'LBP'
+hog.result$Feature<- 'HoG'
+comp<-rbind(lbp.result,hog.result)
+comp<-comp[,c(1,5,2,3,4)]
+
+library(ggplot2)
+library(ggthemes)
+par(mfrow=c(1,2))
+
+ggplot(comp, aes(x=Model,y=Test_accuracy,color=Feature,fill=Feature)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  theme_solarized(light = T)+
+   ylim(0, 1.2)
+
+ggplot(comp, aes(x=Model,y=Running_Time,color=Feature,group=Feature)) +
+  geom_line()+
+  theme_solarized(light = T)
+
+```
+
+
+```{r,echo=FALSE}
+
+comp<-rbind(comp,c("GBM","Sift",1-baseline.result[[2]],
+1-baseline.result[[3]],baseline.result[[4]]))
+comp<-rbind(comp,c("CNN","NULL",1,1,1))
+comp$Parameters<-c("Ntree=","Multinomial","Cost= , Margin= " , "GBM",
+                   "Ntree=","Multinomial","Cost= , Margin= " , "GBM",
+                   "gbm","Layer=")
+library(DT)
+datatable(comp)
+
+```
+
+# Step 4. Final Test
+Depending on our analysis, finally we choose LBP with classifier Logistic Regresstion as our main method. We also want to test the result using others classification method, here are the results.
+
+
+# Step. 4.1. Feature Extraction
+
+```{r}
+# load("../output/lbp_test.csv")
+# output name df_test
+```
+
+# Step. 4.2. Test Process under LBP
+
+```{r, eval=FALSE}
+load("../output/lr.fit.LBP.Rdata")
+load("../output/rf.fit.LBP.Rdata")
+load("../output/svm.fit.LBP.Rdata")
+load("../output/gbm.fit.LBP.Rdata")
+
+test_lr_accuracy = mean(test(lr, df_test))
+test_rf_accuracy = mean(test(rf, df_test))
+test_svm_accuracy = mean(test(svm, df_test))
+test_gbm_accuracy = mean(test(gbm, df_test))
+
+```
+
+# Step 4.3. Final Analysis Table
+
+```{r, echo=F, eval=FALSE}
+
+df_result_final = data.frame(Model = c('Logistic Regresstion', 'Random Forest', 'SVM', 'gbm') , Accuracy = c(test_lr_accuracy,test_rf_accuracy,test_svm_accuracy,test_gbm_accuracy), Time = c(lr$time, rf$time, svm$time, gbm$time))
+
+datatable(Accuracy)
+
+```
 
 
 
