@@ -1,20 +1,27 @@
 # Project: Dogs, Fried Chicken or Blueberry Muffins?
-![image](figs/chicken.jpg)
-![image](figs/muffin.jpg)
+![image](figs/img_0074.jpg)
+![image](figs/img_1282.jpg)
+![image](figs/img_0028.jpg)
 
 ### [Full Project Description](doc/project3_desc.md)
 
 Term: Fall 2017
 
-+ Team #
++ Team #4
 + Team members
-	+ team member 1
-	+ team member 2
-	+ team member 3
-	+ team member 4
-	+ team member 5
+	+ team member 1  Shuyao Hao
+	+ team member 2  Fan Gong
+	+ team member 3  Hongjie Ren
+	+ team member 4  Chenyun Wu
+	+ team member 5  Yingbin Jiang
 
-+ Project summary: In this project, we created a classification engine for images of dogs versus fried chicken versus blueberry muffins. 
++ Project summary: In this project, we want to identify which category the picture belongs to: Dogs, Fried Chicken or Blueberry Muffins. The process consists of two parts: feature extraction and model training. 
+For the feature extraction part, we adopted SIFT, HOG, LBP totally three methods to extract features from 3000 images. 
+For the model training part, we adopted Logistics, Random Foreest and Support Vector Machine, Gradient Boosting Machine and Neural Network totally five methods to train classification models. 
+After several attempts, We found that LBP+Logistic has the highest classification performance and the shortest running time.
+
+Here is the summary of our models:
+![image](figs/)
 	
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
