@@ -26,7 +26,7 @@ feature.hog <- function(img_dir,data_name, set_name,export=T,cell,orientation){
   if(export){
     #save(hog, file=paste0("../output/hog_feature_",cell,orientation,"_", data_name, "_", set_name, ".RData"))
     #write.csv(hog,file=paste0("../output/hog_feature_",cell,orientation,"_", data_name, "_", set_name, ".csv"))
-    write.table(hog810,file=paste0("../output/hog_feature_",cell,orientation,"_", data_name, "_", set_name, ".csv"),
+    write.table(hog,file=paste0("../output/hog_feature_",cell,orientation,"_", data_name, "_", set_name, ".csv"),
                 row.names = F,col.names = F,sep=",")
   }
   
