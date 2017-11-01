@@ -3,8 +3,8 @@ title: "Fried chicken or dogs or blueberry muffins"
 author: "Fall2017-project3-fall2017-project3-grp4"
 date: "10/30/2017"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 # Summary
@@ -242,6 +242,7 @@ test_cnn_prediction = test_cnn("../output/cnn_params/train_cnn", cnn_feature)
 write.csv(test_cnn_prediction,"../output/cnn_test_prediction.csv")
 ```
  
+
 # Step 3. Model Selection
 
 ```{r, echo=FALSE, warning=F, message=FALSE}
@@ -285,7 +286,8 @@ ggplot(data=comp, aes(x=Model,y=Running_Time,color=Feature,fill=Feature)) +
 comp<-rbind(comp,c("GBM","Sift",1-baseline.result[[2]],1-baseline.result[[3]],baseline.result[[4]]))
 comp<-rbind(comp,c("CNN","CNN",0.963, 0.842,1924))
 
-datatable(comp)
+#datatable(comp)
+comp
 ```
 
 # Step 4. Final Test
@@ -321,10 +323,15 @@ test_gbm = test_gbm(gbm, df_test)
 
 # Step 4.3. Final Table
 
-```{r, echo=F, eval=FALSE}
+```{r, eval=FALSE}
 test_cnn = read.csv('../output/cnn_test_prediction.csv')
-label_test = data.frame(X = c(1:3000), 'GBM' = test_gbm, 'SVM' = test_svm, 'Random Forest' = test_rf, 'Logistic Regression' = test_lr, 'Neural Networks' = as.vector(test_cnn[,2]))
+#Get the label of the baseline model's prediction
+label_test_baseline = data.frame(X = c(1:3000), 'baseline' = test_gbm)
+write.csv(label_test_baseline, 'label_test_baseline.csv',row.names = F)
 
+#Get the label of other classification model's prediction
+label_test_all = data.frame(X = c(1:3000), 'GBM' = test_gbm, 'SVM' = test_svm, 'Random Forest' = test_rf, 'Logistic Regression' = test_lr, 'Neural Networks' = as.vector(test_cnn[,2]))
+write.csv(label_test_all, 'label_test_all.csv',row.names = F)
 
 ```
 
