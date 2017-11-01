@@ -1,0 +1,206 @@
+---
+title: "Fried chicken or dogs or blueberry muffins"
+author: "Fall2017-project3-fall2017-project3-grp4"
+date: "10/30/2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Summary
+
+In this project, we created a classification engine for images of dogs versus fried chicken versus blueberry muffins. We tried classifiers (GBM, Logistic Regression, SVM, Random Forest and Neural Networks) under different feature extraction(Sift, LBP, HoG). By comparing the accurancy rate as well as the processing time, we finally chose the best classification method.
+
+# Step 0. Install, Load packages 
+
+```{r}
+packages.used=c("caret","gbm", "e1071", "DMwR", "nnet", "randomForest","OpenImageR")
+# check packages that need to be installed.
+packages.needed=setdiff(packages.used,
+intersect(installed.packages()[,1],
+packages.used))
+# install additional packages
+if(length(packages.needed)>0){
+install.packages(packages.needed, dependencies = TRUE)
+}
+
+library(caret)
+library(gbm)
+library(e1071)
+library(DMwR)
+library(randomForest)
+library(nnet)
+library(OpenImageR)
+
+source("../lib/train_v1.R")
+source("../lib/test_v1.R")
+source("../lib/train_test_split.R")
+
+```
+
+# Step 1. Construct Baseline Model
+
+ Step 1.1. Load Feature
+ 
+ We devided the whole training set into 'df_train' & 'df_test'
+ 
+ 'df_train' is the training data (80%)                               
+ 
+ 'df_test' is the testing data (20%) 
+ 
+```{r}
+
+df = train_test_split("sift") 
+Sift_train = df$df_train
+Sift_test = df$df_test
+```
+
+ Step 1.2. Training Process of Baseline model
+
+```{r}
+
+load("../output/baseline.result.Rdata")
+
+```
+
+ Step 1.3. Predict result
+ 
+ We used GBM, Logistic Regression, SVM, Random Forest to construct the classification process
+ separatly. However, the process really need a long time.
+  
+```{r}
+# Classifications                   Accuracy Rate
+# Sift + GBM                              ~73%
+# Sift + Logistic Regression              ~71%
+# Sift + Random Forest                    ~73%
+# Sift + SVM                              ~33%
+```
+
+# Step 2. Construct Visual Features
+
+The feature Sift, which has 5000 diamensions, is extremely over-weighted, espacially using classifier SVM. Thus we need to explore some other features. In the following process, we extracted LBP features and HoG features.
+
+ Step 2.1. Local Binary Patterns (LBP)
+ 
+ • Divide the examined window into cells (e.g. 16x16 pixels for each cell).
+ 
+ • For each pixel in a cell, compare the pixel to each of its 8 neighbors 2
+ 
+ • Where the center pixel’s value is greater than the neighbor’s value, write “0”. Otherwise, write
+ “1”. This gives an 8-digit binary number.
+ 
+ • Compute the histogram over the cell. This histogram can be seen as a 256-dimensional feature
+ vector.
+ 
+ • Optionally normalize the histogram to 59-dimensional feature vector.
+ 
+ • Concatenate histograms of all cells. This gives a feature vector for the entire window.
+ 
+ We used matlab to extract LBP feature, and finally produce 555 diamensions.
+ 
+ Step 2.1.1. Load Feature
+ 
+```{r}
+
+df = train_test_split("lbp") 
+LBP_train = df$df_train
+LBP_test = df$df_test
+```
+
+ Step 2.1.2. Training Process under LBP
+ 
+# LBP + Random Forest
+
+```{r}
+rf.fit.LBP = train_rf(LBP_train)
+rf.fit.LBP
+```
+
+# LBP + Logistic Regresstion
+
+```{r}
+lr.fit.LBP = train_lr(LBP_train)
+# lr.fit.LBP
+```
+
+# LBP + SVM
+
+```{r}
+svm.fit.LBP = train_svm(LBP_train)
+svm.fit.LBP
+```
+
+# LBP + GBM
+
+```{r}
+gbm.fit.LBP = train_gbm(LBP_train)
+gbm.fit.LBP
+```
+
+ Step 2.1.3. Result table of LBP extraction
+
+```{r}
+load("../output/lbp.result.Rdata")
+
+```
+
+ Step 2.2. HoG
+ 
+ We used R to extract HoG feature, and finally produce 510 diamensions.
+ 
+ Step 2.2.1. Load Feature
+ 
+```{r}
+
+df = train_test_split("hog") 
+HoG_train = df$df_train
+HoG_test = df$df_test
+
+```
+
+ Step 2.2.2. Training Process under HoG
+
+# HoG + Random Forest
+
+```{r}
+rf.fit.HoG = train_rf(HoG_train)
+rf.fit.HoG
+```
+
+# HoG + Logistic Regresstion
+
+```{r}
+lr.fit.HoG = train_lr(HoG_train)
+lr.fit.HoG
+```
+
+# HoG + SVM
+
+```{r}
+SVM.fit.HoG = train_rf(HoG_train)
+SVM.fit.HoG
+```
+
+# HoG + GBM
+
+```{r}
+gbm.fit.HoG = train_gbm(HoG_train)
+gbm.fit.HoG
+```
+
+ Step 2.2.3. Result table of HoG extraction
+
+```{r}
+
+load("../output/hog.result.Rdata")
+
+```
+
+ Step 2.3. Neural Network
+ 
+# Step 3. Model Selection with Cross-validation
+
+# Step 4. Final Train & Time
+
+
+
