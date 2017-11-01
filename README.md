@@ -21,11 +21,12 @@ For the model training part, we adopted Logistics, Random Foreest and Support Ve
 After several attempts, We found that LBP+Logistic has the highest classification performance and the shortest running time.
 
 Here is the test accuracy of our models:
+
 ![image](figs/Test_accuracy.png){align="left"}
 
 
 The comparison of running time:
-![image](figs/Running Time.png){align="left"}
+![image](figs/"Running Time.png"){align="left"}
 	
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
