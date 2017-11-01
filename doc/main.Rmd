@@ -226,22 +226,21 @@ The structure of our neural network model includes one convolution layer, one   
 ## Step 2.3.1 Neural Networks Feature Extraction
 ```{r, eval=FALSE}
 source('../lib/cnn_feature.R')
-cnn_feature = extract_feature(img_dir)
-
+img_dir="../data/test_set/images"
+cnn_feature = extract_feature(img_dir,is_test = T)
 ```
 
-## Step 2.3.2 Neural Networks Model Training
+## Step 2.3.2 Train and Save Neural Networks Model Training
 ```{r, eval=FALSE}
-cnn = train_cnn(cnn_feature)
-save(cnn, "../output/cnn.fit.Rdata")
+train_cnn(cnn_feature)
 ```
 
-## Step 2.3.2 Neural Networks Model Training
-```{r}
-load(file = '../output/cnn.test.Rdata')
-df_cnn
+## Step 2.3.3 Neural Networks Model Prediction
+```{r, eval=FALSE}
+source('test.R')
+test_cnn_prediction = test_cnn("../output/cnn_params/train_cnn", cnn_feature)
+write.csv(test_cnn_prediction,"../output/cnn_test_prediction.csv")
 ```
-
  
 # Step 3. Model Selection
 
@@ -296,32 +295,36 @@ Depending on our analysis, finally we choose LBP with classifier Logistic Regres
 # Step. 4.1. Feature Extraction
 
 ```{r}
-# load("../output/lbp_test.csv")
-# output name df_test
+df_test = read.csv("../output/lbp_test.csv", header = F)
 ```
 
-# Step. 4.2. Test Process under LBP
+# Step. 4.2. Test Process under SIFT and LBP
 
 ```{r, eval=FALSE}
+sift_test = read.csv('../data/sift_test.csv', header = T)
 load("../output/lr.fit.LBP.Rdata")
 load("../output/rf.fit.LBP.Rdata")
 load("../output/svm.fit.LBP.Rdata")
 load("../output/gbm.fit.LBP.Rdata")
+load("../output/baseline.result.Rdata")
 
-test_lr_accuracy = mean(test(lr, df_test))
-test_rf_accuracy = mean(test(rf, df_test))
-test_svm_accuracy = mean(test(svm, df_test))
-test_gbm_accuracy = mean(test(gbm, df_test))
+baseline.model = list(fit = baseline.result[[1]])
+
+baseline.test.pre = predict(baseline.model, sift_test)
+
+test_lr = test(lr, df_test)
+test_rf = test(rf, df_test)
+test_svm = test(svm, df_test)
+test_gbm = test_gbm(gbm, df_test)
 
 ```
 
-# Step 4.3. Final Analysis Table
+# Step 4.3. Final Table
 
 ```{r, echo=F, eval=FALSE}
+test_cnn = read.csv('../output/cnn_test_prediction.csv')
+label_test = data.frame(X = c(1:3000), 'GBM' = test_gbm, 'SVM' = test_svm, 'Random Forest' = test_rf, 'Logistic Regression' = test_lr, 'Neural Networks' = as.vector(test_cnn[,2]))
 
-df_result_final = data.frame(Model = c('Logistic Regresstion', 'Random Forest', 'SVM', 'gbm') , Accuracy = c(test_lr_accuracy,test_rf_accuracy,test_svm_accuracy,test_gbm_accuracy), Time = c(lr$time, rf$time, svm$time, gbm$time))
-
-datatable(Accuracy)
 
 ```
 
