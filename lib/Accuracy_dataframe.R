@@ -62,7 +62,7 @@ df_result = data.frame(Model = c('Random Forest', 'Logistic Regression',
                                  'SVM', 'GBM', 'Neural Networks'), 
                        Train_accuracy = c(train_rf_accuracy, train_lr_accuracy, 
                                           train_svm_accuracy, train_gbm_accuracy, 1), 
-                       Test_accuracy = c(test_rf_accuracy, train_lr_accuracy, 
+                       Test_accuracy = c(test_rf_accuracy, test_lr_accuracy, 
                                          test_svm_accuracy, test_gbm_accuracy, 1), 
                        Running_Time = c(rf_time, lr_time, svm_time, gbm_time, 1))
 
