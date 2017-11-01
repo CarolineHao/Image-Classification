@@ -101,7 +101,7 @@ train_rf = function(dat_train){
                  data = df_train,
                  method = "rf", 
                  trControl = fitControl,
-                 ntree = 500, #number of trees to grow
+                 ntree = 1000, #number of trees to grow
                  tuneGrid = rfGrid) # Parameter Tuning
   end_time_rf = Sys.time() # Model End time
   end_time_rf - start_time_rf
