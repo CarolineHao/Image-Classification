@@ -18,13 +18,7 @@ test_gbm = function(fit_train, dat_test){
 }
 
 
-
-
-##### Test Function For All Other Classification Model #####
-test = function(fit_train, dat_test){
-  pred = predict(fit_train$fit, newdata = dat_test)
-  return(pred)
-}
+##### Testing Function For CNN Model #####
 
 test_cnn = function(model_path,iteration = iter, dat_test_cnn){
   test_x = t(dat_test_cnn[dat_test_cnn$is_train==F,3:4098])
@@ -35,6 +29,15 @@ test_cnn = function(model_path,iteration = iter, dat_test_cnn){
   return(max.col(t(predicted)) - 1)
   
 }
+
+
+##### Test Function For All Other Classification Model #####
+test = function(fit_train, dat_test){
+  pred = predict(fit_train$fit, newdata = dat_test)
+  return(pred)
+}
+
+
 
 
 
