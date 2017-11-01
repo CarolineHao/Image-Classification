@@ -20,8 +20,10 @@ For the feature extraction part, we adopted SIFT, HOG, LBP totally three methods
 For the model training part, we adopted Logistics, Random Foreest and Support Vector Machine, Gradient Boosting Machine and Neural Network totally five methods to train classification models. 
 After several attempts, We found that LBP+Logistic has the highest classification performance and the shortest running time.
 
-Here is the summary of our models:
+Here is the test accuracy of our models:
 ![image](figs/Test_accuracy.png)
+
+The comparison of running time:
 ![image](figs/Running Time.png)
 	
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
