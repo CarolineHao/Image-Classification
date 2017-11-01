@@ -7,8 +7,8 @@ train_test_accuracy = function(feature) {
   
   ### feature: feature extraction method we use
   
-  source("../lib/train_v2.R")
-  source("../lib/test_v2.R")
+  source("../lib/train.R")
+  source("../lib/test.R")
   source("../lib/train_test_split.R")
   library(caret)
   library(gbm)
