@@ -32,8 +32,8 @@ library(randomForest)
 library(nnet)
 library(OpenImageR)
 
-source("../lib/train_v1.R")
-source("../lib/test_v1.R")
+source("../lib/train_v2.R")
+source("../lib/test_v2.R")
 source("../lib/train_test_split.R")
 
 ```
@@ -82,19 +82,19 @@ The feature Sift, which has 5000 diamensions, is extremely over-weighted, espaci
 
  Step 2.1. Local Binary Patterns (LBP)
  
- • Divide the examined window into cells (e.g. 16x16 pixels for each cell).
+ ??? Divide the examined window into cells (e.g. 16x16 pixels for each cell).
  
- • For each pixel in a cell, compare the pixel to each of its 8 neighbors 2
+ ??? For each pixel in a cell, compare the pixel to each of its 8 neighbors 2
  
- • Where the center pixel’s value is greater than the neighbor’s value, write “0”. Otherwise, write
- “1”. This gives an 8-digit binary number.
+ ??? Where the center pixel???s value is greater than the neighbor???s value, write ???0???. Otherwise, write
+ ???1???. This gives an 8-digit binary number.
  
- • Compute the histogram over the cell. This histogram can be seen as a 256-dimensional feature
+ ??? Compute the histogram over the cell. This histogram can be seen as a 256-dimensional feature
  vector.
  
- • Optionally normalize the histogram to 59-dimensional feature vector.
+ ??? Optionally normalize the histogram to 59-dimensional feature vector.
  
- • Concatenate histograms of all cells. This gives a feature vector for the entire window.
+ ??? Concatenate histograms of all cells. This gives a feature vector for the entire window.
  
  We used matlab to extract LBP feature, and finally produce 555 diamensions.
  
