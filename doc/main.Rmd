@@ -107,10 +107,6 @@ The feature Sift, which has 5000 diamensions, is extremely over-weighted, espaci
 * Compute the histogram over the cell. This histogram can be seen as a 256-dimensional feature
 vector.
 
-* Optionally normalize the histogram to 59-dimensional feature vector.
-
-* Concatenate histograms of all cells. This gives a feature vector for the entire window.
-
  
 # Step 2.1.1. Creat and Load Feature
  We used matlab to extract LBP feature, and finally produce 555 diamensions.
