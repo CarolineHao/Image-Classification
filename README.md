@@ -15,7 +15,10 @@ Term: Fall 2017
 	+ team member 4  Chenyun Wu
 	+ team member 5  Yingbin Jiang
 
-+ Project summary: In this project, we want to identify which category the picture belongs to: Dogs, Fried Chicken or Blueberry Muffins. The process consists of two parts: feature extraction and model training. For the feature extraction part, we adopted SIFT, HOG, LBP totally three methods to extract features from 3000 images. For the model training part, we adopted Logistics, Random Foreest and Support Vector Machine, Gradient Boosting Machine and Neural Network totally five methods to train classification models. After several attempts, We found that LBP+Logistic has the highest classification performance and the shortest running time.
++ Project summary: In this project, we want to identify which category the picture belongs to: Dogs, Fried Chicken or Blueberry Muffins. The process consists of two parts: feature extraction and model training. 
+For the feature extraction part, we adopted SIFT, HOG, LBP totally three methods to extract features from 3000 images. 
+For the model training part, we adopted Logistics, Random Foreest and Support Vector Machine, Gradient Boosting Machine and Neural Network totally five methods to train classification models. 
+After several attempts, We found that LBP+Logistic has the highest classification performance and the shortest running time.
 
 Here is the summary of our models:
 ![image](figs/)
