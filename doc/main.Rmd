@@ -242,6 +242,39 @@ test_cnn_prediction = test_cnn("../output/cnn_params/train_cnn", cnn_feature)
 write.csv(test_cnn_prediction,"../output/cnn_test_prediction.csv")
 ```
  
+## Step 2.4 Majority Vote
+Mojority vote model is the combination of three models of logistic regression, GBM and SVM, which are three best models in our training process . Each model counts 1 vote to the final combo model. The majority label is prediction of our combo model.
+```{r}
+load("../output/lr.fit.LBP.Rdata")
+load("../output/svm.fit.LBP.Rdata")
+load("../output/gbm.fit.LBP.Rdata")
+# Here is the code we use to create majority vote matrix
+df = train_test_split('lbp')
+svm_pre = test(svm,df$df_test)
+lr_pre = test(lr,df$df_test)
+gbm_pre = test_gbm(gbm,df$df_test)
+
+all_train=data.frame(svm_pre,lr_pre,gbm_pre)
+
+
+for (i in 1:600){
+  if (all_train[i,1]==all_train[i,2]){
+    all_train[i,4]=all_train[i,1]
+  } else if (all_train[i,1]==all_train[i,3]){
+    all_train[i,4]=all_train[i,1]
+  } else if (all_train[i,2]==all_train[i,3]){
+    all_train[i,4]=all_train[i,3]
+  } else{
+    all_train[i,4]=all_train[i,2] 
+  }
+}
+
+
+print(paste0("The test accuracy of the majority vote model is ", mean(all_train$V4 == df$df_test$Label)))
+
+
+```
+
 
 # Step 3. Model Selection
 
@@ -317,7 +350,7 @@ baseline.test.pre = predict(baseline.model, sift_test)
 test_lr = test(lr, df_test)
 test_rf = test(rf, df_test)
 test_svm = test(svm, df_test)
-test_gbm = test_gbm(gbm, df_test)
+test_gbm_1 = test_gbm(gbm, df_test)
 
 ```
 
@@ -326,11 +359,26 @@ test_gbm = test_gbm(gbm, df_test)
 ```{r, eval=FALSE}
 test_cnn = read.csv('../output/cnn_test_prediction.csv')
 #Get the label of the baseline model's prediction
-label_test_baseline = data.frame(X = c(1:3000), 'baseline' = test_gbm)
+label_test_baseline = data.frame(X = c(1:3000), 'baseline' = test_gbm_1)
 write.csv(label_test_baseline, 'label_test_baseline.csv',row.names = F)
 
 #Get the label of other classification model's prediction
-label_test_all = data.frame(X = c(1:3000), 'GBM' = test_gbm, 'SVM' = test_svm, 'Random Forest' = test_rf, 'Logistic Regression' = test_lr, 'Neural Networks' = as.vector(test_cnn[,2]))
+all_train=data.frame(test_svm,test_lr,test_gbm_1)
+
+for (i in 1:3000){
+  if (all_train[i,1]==all_train[i,2]){
+    all_train[i,4]=all_train[i,1]
+  } else if (all_train[i,1]==all_train[i,3]){
+    all_train[i,4]=all_train[i,1]
+  } else if (all_train[i,2]==all_train[i,3]){
+    all_train[i,4]=all_train[i,3]
+  } else{
+    all_train[i,4]=all_train[i,2] 
+  }
+}
+
+
+label_test_all = data.frame(X = c(1:3000), 'GBM' = test_gbm_1, 'SVM' = test_svm, 'Random Forest' = test_rf, 'Logistic Regression' = test_lr, 'Neural Networks' = as.vector(test_cnn[,2]), 'majority_vote' = all_train$V4)
 write.csv(label_test_all, 'label_test_all.csv',row.names = F)
 
 ```
